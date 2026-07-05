@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Personalized Learning Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0a0f1c',
+                        surface: 'rgba(30, 41, 59, 0.7)',
+                        accent: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0f1c;
+            color: white;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #60a5fa, #818cf8, #c084fc);
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+
+<body class="relative min-h-screen p-4 sm:p-8">
+    <!-- Background Decor -->
+    <div
+        class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none z-[-1]">
+    </div>
+    <div
+        class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none z-[-1]">
+    </div>
+
+    <div class="max-w-7xl mx-auto space-y-8">
+
+        <!-- Header -->
+        <header
+            class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
+                    <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                        </path>
+                    </svg>
+                    <span class="text-gradient">Personalized Learning AI</span>
+                </h1>
+                <p class="text-slate-400 text-sm">Real-time educational analytics & predictive modeling</p>
+            </div>
+
+            <div class="glass-panel px-6 py-3 flex gap-6 items-center">
+                <div class="flex flex-col">
+                    <span class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Avg Engagement</span>
+                    <span id="avgEngagement" class="text-emerald-400 font-bold text-lg">82%</span>
+                </div>
+                <div class="h-8 w-px bg-slate-700"></div>
+                <div class="flex flex-col">
+                    <span class="text-slate-400 text-xs uppercase tracking-wider font-semibold">Active Students</span>
+                    <span id="activeStudents" class="text-white font-bold text-lg">24</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Left Column -->
+            <div class="flex flex-col gap-6 lg:col-span-1">
+
+                <!-- Action Panel -->
+                <div class="glass-panel p-6 relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl transition-all duration-500 group-hover:bg-blue-500/20">
+                    </div>
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-white mb-5">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                        Student Context
+                    </h2>
+
+                    <div class="flex flex-col gap-2 mb-4">
+                        <label class="text-sm font-medium text-slate-400">Student ID or Name</label>
+                        <input type="text" id="studentId" value="S101"
+                            class="bg-slate-800/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                            placeholder="E.g. S101 or John Doe">
+                    </div>
+
+                    <button onclick="generatePath()" id="generateBtn"
+                        class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-blue-900/20 transition-all active:scale-95 flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate AI Path</span>
+                    </button>
+                </div>
+
+                <!-- Recommendations Container -->
+                <div id="recommendationsList" class="glass-panel p-6 flex flex-col gap-4 hidden">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-white">
+                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                            </path>
+                        </svg>
+                        Predicted Optimal Path
+                    </h2>
+                    <div id="recsContainer" class="flex flex-col gap-3"></div>
+                </div>
+
+                <!-- Vision AI -->
+                <div class="glass-panel p-6">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-white mb-3">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Mock Vision AI
+                    </h2>
+                    <p class="text-sm text-slate-400 mb-4">Analyze real-time emotional and engagement states.</p>
+                    <button onclick="analyzeEngagement()"
+                        class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        Analyze
+                    </button>
+                    <div id="engagementAlert"
+                        class="mt-4 hidden p-4 rounded-xl border flex items-start gap-3 transition-all">
+                        <div id="engagementIcon"></div>
+                        <div>
+                            <div class="font-bold mb-1" id="engagementScoreText"></div>
+                            <div class="text-sm border-white/80" id="engagementDescText"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column -->
+            <div class="flex flex-col gap-6 lg:col-span-2">
+
+                <!-- Chart 1 -->
+                <div class="glass-panel p-6 h-[400px] flex flex-col">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2 mb-4">
+                        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        Cross-Subject Performance Trajectory
+                    </h2>
+                    <div class="relative w-full h-full">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Secondary Widgets -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-6 h-[300px] flex flex-col">
+                        <h2 class="text-lg font-bold text-white mb-2">Historical Engagement</h2>
+                        <div class="relative w-full h-full">
+                            <canvas id="engagementBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 flex flex-col justify-center">
+                        <h2 class="text-lg font-bold text-white mb-2">Automated Insights</h2>
+                        <ul class="space-y-4 mt-4">
+                            <li class="flex gap-3 items-start">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400 mt-2 shrink-0"></div>
+                                <p class="text-sm text-slate-300">Consistent upward trend in Science indicates high
+                                    retention.</p>
+                            </li>
+                            <li class="flex gap-3 items-start">
+                                <div class="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0"></div>
+                                <p class="text-sm text-slate-300">Visual learning style profile established with 87%
+                                    confidence.</p>
+                            </li>
+                            <li class="flex gap-3 items-start">
+                                <div class="w-2 h-2 rounded-full bg-purple-400 mt-2 shrink-0"></div>
+                                <p class="text-sm text-slate-300">Recommended: Introduce advanced Math concepts (W6).
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Init Charts
+        const ctx1 = document.getElementById('performanceChart').getContext('2d');
+        const gradientBleu = ctx1.createLinearGradient(0, 0, 0, 400);
+        gradientBleu.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+        gradientBleu.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
+        const gradientEmerald = ctx1.createLinearGradient(0, 0, 0, 400);
+        gradientEmerald.addColorStop(0, 'rgba(16, 185, 129, 0.5)');
+        gradientEmerald.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5'],
+                datasets: [
+                    {
+                        label: 'Mathematics',
+                        data: [65, 68, 75, 82, 86],
+                        borderColor: '#3b82f6',
+                        backgroundColor: gradientBleu,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Science',
+                        data: [70, 74, 78, 85, 89],
+                        borderColor: '#10b981',
+                        backgroundColor: gradientEmerald,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#f8fafc' } }
+                },
+                scales: {
+                    y: { grid: { color: 'rgba(51, 65, 85, 0.5)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('engagementBarChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['W1', 'W2', 'W3', 'W4', 'W5'],
+                datasets: [{
+                    label: 'Engagement Index',
+                    data: [68, 72, 70, 76, 80],
+                    backgroundColor: '#a855f7',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { grid: { color: 'rgba(51, 65, 85, 0.5)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        // App Logic
+        function generatePath() {
+            const btn = document.getElementById('generateBtn');
+            btn.innerHTML = `<svg class="w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Generating...</span>`;
+
+            setTimeout(() => {
+                const recs = [
+                    { name: "Advanced Algebra Module", conf: "94% Match", time: "45 min" },
+                    { name: "Interactive Physics Simulator", conf: "88% Match", time: "30 min" },
+                    { name: "Literature Review Guide", conf: "76% Match", time: "20 min" }
+                ];
+
+                const container = document.getElementById('recsContainer');
+                container.innerHTML = recs.map(r => `
+                    <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-4 hover:bg-slate-800/60 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold text-slate-200">${r.name}</h3>
+                            <span class="text-xs font-bold px-2 py-1 bg-indigo-500/20 text-indigo-300 rounded-md">${r.conf}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-400">
+                            <span>Est. Time: ${r.time}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('recommendationsList').classList.remove('hidden');
+                btn.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> <span>Generate AI Path</span>`;
+            }, 800);
+        }
+
+        function analyzeEngagement() {
+            const score = Math.floor(Math.random() * 40) + 60; // 60-100
+            const alert = Math.random() > 0.8;
+
+            const alertBox = document.getElementById('engagementAlert');
+            const iconBox = document.getElementById('engagementIcon');
+            const scoreText = document.getElementById('engagementScoreText');
+            const descText = document.getElementById('engagementDescText');
+
+            alertBox.classList.remove('hidden', 'bg-red-500/10', 'border-red-500/30', 'text-red-200', 'bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200');
+
+            scoreText.innerText = `Engagement Score: ${score}/100`;
+
+            if (alert) {
+                alertBox.classList.add('bg-red-500/10', 'border-red-500/30', 'text-red-200');
+                iconBox.innerHTML = `<svg class="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+                descText.innerText = 'Critical drop in attention detected. Adjust learning pace immediately.';
+            } else {
+                alertBox.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-200');
+                iconBox.innerHTML = `<svg class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>`;
+                descText.innerText = 'Student is highly focused and absorbing material effectively.';
+            }
+        }
+    </script>
+</body>
+
+</html>
